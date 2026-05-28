@@ -1,0 +1,194 @@
+# config/matrix.yml — distro × arch support matrix for linux-distro-prefix
+#
+# Mirrors linux-distro-stage3 matrix: a prefix can be built for any distro/arch
+# combination that has a corresponding stage3 release.
+#
+# tier:
+#   1 — built in CI on every push + monthly schedule (amd64/arm64/armhf)
+#   2 — built on monthly schedule only
+#   3 — experimental, manual workflow_dispatch only
+
+distros:
+
+  debian:
+    releases:
+      - trixie
+      - bookworm
+      - sid
+    default_release: trixie
+    arches:
+      amd64:
+        tier: 1
+      arm64:
+        tier: 1
+      armhf:
+        tier: 1
+      riscv64:
+        tier: 2
+      ppc64el:
+        tier: 2
+      s390x:
+        tier: 2
+      loong64:
+        tier: 3
+      i386:
+        tier: 2
+
+  ubuntu:
+    releases:
+      - noble
+      - jammy
+      - oracular
+    default_release: noble
+    arches:
+      amd64:
+        tier: 1
+      arm64:
+        tier: 1
+      armhf:
+        tier: 1
+      riscv64:
+        tier: 2
+      ppc64el:
+        tier: 2
+      s390x:
+        tier: 2
+      i386:
+        tier: 3
+
+  devuan:
+    releases:
+      - excalibur
+      - daedalus
+      - ceres
+    default_release: excalibur
+    arches:
+      amd64:
+        tier: 1
+      arm64:
+        tier: 1
+      armhf:
+        tier: 1
+      riscv64:
+        tier: 2
+      ppc64el:
+        tier: 2
+      i386:
+        tier: 2
+
+  arch:
+    releases:
+      - rolling
+    default_release: rolling
+    arches:
+      amd64:
+        tier: 1
+      arm64:
+        tier: 1
+      armhf:
+        tier: 2
+      riscv64:
+        tier: 3
+      i386:
+        tier: 3
+
+  fedora:
+    releases:
+      - "42"
+      - "41"
+      - rawhide
+    default_release: "42"
+    arches:
+      amd64:
+        tier: 1
+      arm64:
+        tier: 1
+      armhf:
+        tier: 2
+      ppc64el:
+        tier: 2
+      s390x:
+        tier: 2
+      i386:
+        tier: 2
+
+  alpine:
+    releases:
+      - "3.21"
+      - "3.20"
+      - edge
+    default_release: "3.21"
+    arches:
+      amd64:
+        tier: 1
+      arm64:
+        tier: 1
+      armhf:
+        tier: 1
+      riscv64:
+        tier: 2
+      ppc64el:
+        tier: 2
+      s390x:
+        tier: 2
+      loong64:
+        tier: 3
+      i386:
+        tier: 2
+
+  void:
+    releases:
+      - rolling
+    default_release: rolling
+    arches:
+      amd64:
+        tier: 1
+      arm64:
+        tier: 1
+      armhf:
+        tier: 2
+      ppc64el:
+        tier: 2
+      i386:
+        tier: 2
+
+  opensuse:
+    releases:
+      - tumbleweed
+      - "15.6"
+    default_release: tumbleweed
+    arches:
+      amd64:
+        tier: 1
+      arm64:
+        tier: 1
+      armhf:
+        tier: 2
+      ppc64el:
+        tier: 2
+      s390x:
+        tier: 2
+      i386:
+        tier: 2
+
+  gentoo:
+    releases:
+      - rolling
+    default_release: rolling
+    arches:
+      amd64:
+        tier: 1
+      arm64:
+        tier: 1
+      armhf:
+        tier: 2
+      riscv64:
+        tier: 2
+      ppc64el:
+        tier: 2
+      s390x:
+        tier: 3
+      loong64:
+        tier: 3
+      i386:
+        tier: 2

@@ -1,0 +1,140 @@
+name: Build linux-distro-prefix
+
+on:
+  workflow_dispatch:
+    inputs:
+      distro:
+        description: 'Distro (leave blank for all tier-1)'
+        required: false
+        default: ''
+      release:
+        description: 'Release (leave blank for default)'
+        required: false
+        default: ''
+      arch:
+        description: 'Arch (leave blank for all tier-1)'
+        required: false
+        default: ''
+      tier:
+        description: 'Maximum tier to build (1=default, 2=weekly, 3=experimental)'
+        required: false
+        default: '1'
+  schedule:
+    # Monthly on the 2nd — offset from linux-distro-stage3 (1st) so stage3 releases are ready
+    - cron: "0 4 2 * *"
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
+      - 'BUILDING.md'
+      - 'integrations/**'
+
+concurrency:
+  group: build-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  # ── generate matrix ──────────────────────────────────────────────────────────
+  generate-matrix:
+    name: Generate build matrix
+    runs-on: ubuntu-24.04
+    outputs:
+      matrix: ${{ steps.gen.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate matrix
+        id: gen
+        run: |
+          TIER="${{ github.event.inputs.tier || '1' }}"
+          DISTRO="${{ github.event.inputs.distro || '' }}"
+          ARCH="${{ github.event.inputs.arch || '' }}"
+          ARGS="--tier ${TIER}"
+          [[ -n "$DISTRO" ]] && ARGS="$ARGS --distro $DISTRO"
+          [[ -n "$ARCH"   ]] && ARGS="$ARGS --arch $ARCH"
+          MATRIX=$(python3 scripts/gen-matrix.py $ARGS)
+          echo "matrix=${MATRIX}" >> "$GITHUB_OUTPUT"
+
+  # ── build prefix ─────────────────────────────────────────────────────────────
+  build:
+    name: ${{ matrix.distro }}/${{ matrix.release }}/${{ matrix.arch }}
+    needs: generate-matrix
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    steps:
+      - name: Free disk space
+        uses: jlumbroso/free-disk-space@main
+        with:
+          tool-cache: true
+
+      - name: Free additional disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc
+          sudo apt-get clean
+          df -h
+
+      - uses: actions/checkout@v4
+
+      - name: Build prefix
+        run: |
+          sudo ./build.sh \
+            --distro  "${{ matrix.distro }}" \
+            --release "${{ matrix.release }}" \
+            --arch    "${{ matrix.arch }}" \
+            --jobs    "$(nproc)"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-distro-prefix-${{ matrix.distro }}-${{ matrix.arch }}
+          path: |
+            linux_distro_prefix_${{ matrix.distro }}_${{ matrix.arch }}_*.tar.gz
+            linux_distro_prefix_${{ matrix.distro }}_${{ matrix.arch }}_*.tar.gz.sha256
+          if-no-files-found: error
+
+  # ── release ───────────────────────────────────────────────────────────────────
+  release:
+    name: Release
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: linux-distro-prefix-*
+          merge-multiple: true
+
+      - name: Generate release metadata
+        id: meta
+        run: |
+          DATE=$(date +"%Y%m%d")
+          echo "tag=${DATE}" >> "$GITHUB_OUTPUT"
+          echo "name=linux-distro-prefix ${DATE}" >> "$GITHUB_OUTPUT"
+          # Checksums for release body
+          sha256sum linux_distro_prefix_*.tar.gz > SHA256SUMS
+          echo "checksums<<EOF" >> "$GITHUB_OUTPUT"
+          cat SHA256SUMS >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "linux_distro_prefix_*.tar.gz,linux_distro_prefix_*.tar.gz.sha256,SHA256SUMS"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: false
+          tag: ${{ steps.meta.outputs.tag }}
+          name: ${{ steps.meta.outputs.name }}
+          commit: ${{ github.ref_name }}
+          body: |
+            Gentoo prefix tarballs for all tier-1 distro/arch combinations.
+
+            Install to `/usr/local` and run `startprefix` to enter the prefix.
+
+            **SHA256 checksums:**
+            ```
+            ${{ steps.meta.outputs.checksums }}
+            ```
