@@ -1,0 +1,7 @@
+*.log
+.env
+.DS_Store
+.npmrc
+scripts/__pycache__/
+tests/__pycache__/
+**/*.pyc
