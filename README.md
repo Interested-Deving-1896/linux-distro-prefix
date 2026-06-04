@@ -1,87 +1,75 @@
+[update-readmes]   Mode: rewrite — migrating to template structure...
 # linux-distro-prefix
 
-A distro-agnostic, architecture-agnostic Gentoo prefix builder.
+[![Built with Ona](https://ona.com/build-with-ona.svg)](https://app.ona.com/#https://github.com/Interested-Deving-1896/linux-distro-prefix)
 
-Builds a self-contained Gentoo prefix (`/usr/local/gentoo`) on top of any supported Linux distro and CPU architecture. The prefix is independent of the host distro after installation — only the bootstrap chroot depends on the base distro.
+<!-- AI:start:what-it-does -->
+_Description pending._
+<!-- AI:end:what-it-does -->
 
-Stage3 rootfs tarballs are sourced from [linux-distro-stage3](https://github.com/Interested-Deving-1896/linux-distro-stage3) releases.
+## Architecture
 
-## Supported distros and architectures
+<!-- AI:start:architecture -->
+_Architecture documentation pending._
+<!-- AI:end:architecture -->
 
-| Distro | amd64 | arm64 | armhf | riscv64 | ppc64el | s390x | loong64 | i386 |
-|--------|-------|-------|-------|---------|---------|-------|---------|------|
-| Debian | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Ubuntu | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — | ✓ |
-| Devuan | ✓ | ✓ | ✓ | ✓ | ✓ | — | — | ✓ |
-| Arch | ✓ | ✓ | ✓ | ✓ | — | — | — | ✓ |
-| Fedora | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | ✓ |
-| Alpine | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
-| Void | ✓ | ✓ | ✓ | — | ✓ | — | — | ✓ |
-| openSUSE | ✓ | ✓ | ✓ | — | ✓ | ✓ | — | ✓ |
-| Gentoo | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+## Install
 
-Tier-1 (CI on every push): amd64, arm64, armhf. See `config/matrix.yml` for full tier assignments.
-
-## What the prefix contains
-
-- Gentoo prefix bootstrap stages 1–3 (`bootstrap-prefix.sh`)
-- `app-portage/prefix-toolkit`
-- `startprefix` launcher at `/usr/local/bin/startprefix`
-
-No display stack, no ChromeOS-specific packages. Forks can add those on top.
-
-## Building locally
-
-Requirements: root access, `curl`, `coreutils`, ~10 GB free disk space, ~1–2 hours build time.
+<!-- Add installation instructions here. This section is yours — the AI will not modify it. -->
 
 ```bash
-git clone https://github.com/Interested-Deving-1896/linux-distro-prefix
+git clone https://github.com/Interested-Deving-1896/linux-distro-prefix.git
 cd linux-distro-prefix
-sudo ./build.sh --distro debian --release trixie --arch amd64
 ```
 
-Cross-arch builds require `qemu-user-static` (installed automatically on Debian/Ubuntu hosts).
+## Usage
 
-### Options
+<!-- Add usage examples here. This section is yours — the AI will not modify it. -->
 
-| Flag | Default | Description |
-|------|---------|-------------|
-| `--distro` | `debian` | Base distro for bootstrap chroot |
-| `--release` | `trixie` | Distro release |
-| `--arch` | `amd64` | Target architecture |
-| `--output` | `./` | Output directory for tarball |
-| `--jobs` | `nproc` | Parallel jobs |
-| `--stage3` | _(fetched)_ | Path to a local stage3 tarball |
+## Configuration
 
-### Output
+<!-- Document configuration options here. This section is yours — the AI will not modify it. -->
 
-```
-linux_distro_prefix_{distro}_{arch}_{YYYYMMDD}.tar.gz
-linux_distro_prefix_{distro}_{arch}_{YYYYMMDD}.tar.gz.sha256
-linux_distro_prefix_{distro}_{arch}.tar.gz          ← symlink to latest
-```
+## CI
 
-## Installing the prefix
+<!-- AI:start:ci -->
+_CI documentation pending._
+<!-- AI:end:ci -->
 
-```bash
-# Extract to /usr/local (takes ~2 GB)
-sudo tar zxf linux_distro_prefix_debian_amd64_YYYYMMDD.tar.gz -C /usr/local
+## Mirror chain
 
-# Enter the prefix
-/usr/local/bin/startprefix
-```
-
-## Relationship to other projects
+<!-- AI:start:mirror-chain -->
+This repo is maintained in [`Interested-Deving-1896/linux-distro-prefix`](https://github.com/Interested-Deving-1896/linux-distro-prefix) and mirrored through:
 
 ```
-linux-distro-stage3   →   linux-distro-prefix   →   penguins-eggs-prefix
-     (stage3 tarballs)         (prefix tarballs)          (prefix + ISO)
+Interested-Deving-1896/linux-distro-prefix  ──►  OpenOS-Project-OSP/linux-distro-prefix  ──►  OpenOS-Project-Ecosystem-OOC/linux-distro-prefix
 ```
 
-- **linux-distro-stage3**: provides the bootstrap chroot base
-- **linux-distro-prefix**: this repo — builds the Gentoo prefix
-- **penguins-eggs-prefix**: fork that adds penguins-eggs integration for ISO production
+Changes flow downstream automatically via the hourly mirror chain in
+[`fork-sync-all`](https://github.com/Interested-Deving-1896/fork-sync-all).
+Direct commits to OSP or OOC are detected and opened as PRs back to `Interested-Deving-1896`.
+<!-- AI:end:mirror-chain -->
+
+## Contributors
+
+<!-- AI:start:contributors -->
+_Contributors pending._
+<!-- AI:end:contributors -->
+
+## Origins
+
+<!-- AI:start:origins -->
+_Original project — no upstream fork._
+<!-- AI:end:origins -->
+
+## Resources
+
+<!-- AI:start:resources -->
+_No additional resource files found._
+<!-- AI:end:resources -->
 
 ## License
 
-MIT
+<!-- AI:start:license -->
+[MIT](https://github.com/Interested-Deving-1896/linux-distro-prefix/blob/main/LICENSE) © 2026 [Interested-Deving-1896](https://github.com/Interested-Deving-1896)
+<!-- AI:end:license -->
