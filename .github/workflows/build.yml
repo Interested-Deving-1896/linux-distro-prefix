@@ -42,7 +42,7 @@ jobs:
     outputs:
       matrix: ${{ steps.gen.outputs.matrix }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Generate matrix
         id: gen
         run: |
@@ -75,7 +75,7 @@ jobs:
           sudo apt-get clean
           df -h
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Build prefix
         run: |
