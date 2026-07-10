@@ -43,6 +43,10 @@ jobs:
           GH_TOKEN: ${{ secrets.SYNC_TOKEN }}
           WORKFLOW_NAME: ${{ github.event.workflow_run.name }}
         run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "Error: GH_TOKEN is not set."
+            exit 1
+          fi
           case "$WORKFLOW_NAME" in
             "Mirror Interested-Deving-1896 → OSP") TARGET=mirror-to-osp.yml ;;
             "Mirror Orgs")                         TARGET=mirror-orgs-full.yml ;;
